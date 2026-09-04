@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Problem IQ</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* User color palette */
+        :root{--bg:#0B111E;--card:#172237;--text:#F3F4F6;--accent:#0EA5E9;--muted:#94A3B8}
+        *{box-sizing:border-box}
+        body{font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;margin:0;background:var(--bg);color:var(--text);}
+        .container{max-width:1100px;margin:0 auto;padding:24px}
+        header.app-header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+        .brand{font-weight:700;font-size:1.15rem;color:var(--accent)}
+        nav.top-nav{display:flex;gap:12px;align-items:center}
+        nav.top-nav a{color:var(--muted);text-decoration:none;padding:8px 10px;border-radius:8px}
+        nav.top-nav a:hover{background:rgba(43,108,176,0.06);color:var(--accent)}
+        .search{margin-left:12px;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:var(--text);width:220px}
+        .github-btn{background:var(--accent);color:var(--bg);padding:8px 12px;border-radius:10px;text-decoration:none;font-weight:700}
+        .hero{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start;margin-bottom:22px}
+        .hero .left{flex:1;min-width:260px}
+        .hero h1{margin:0;font-size:1.9rem}
+        .hero p{margin:8px 0;color:var(--muted)}
+        .cta{display:flex;gap:10px;margin-top:10px}
+        .cta a{padding:10px 14px;border-radius:10px;text-decoration:none;color:white;background:var(--accent)}
+        .card{background:var(--card);padding:18px;border-radius:12px;text-decoration:none;color:var(--text);border:1px solid rgba(255,255,255,0.04)}
+        .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+        .link-card{display:block}
+        .link-card:hover{box-shadow:0 10px 30px rgba(14,165,233,0.08);transform:translateY(-6px);transition:all .18s ease}
+        h3{margin:0 0 8px 0;text-transform:capitalize;color:var(--text);font-size:1.05rem}
+        .card p.muted{color:var(--muted);font-size:0.9rem;margin-top:8px}
+        ul{margin:8px 0 0 1rem;padding:0}
+        li{margin:6px 0;color:var(--text)}
+        .meta{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:0.9rem;margin-top:10px}
+        .chip{background:linear-gradient(90deg,rgba(14,165,233,0.08),transparent);color:var(--accent);padding:6px 8px;border-radius:8px;font-weight:600;font-size:0.85rem}
+        .topic-section{margin-top:28px}
+        .section-heading{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:12px}
+        .section-heading h2{margin:0;font-size:1.4rem}
+        .section-heading span{color:var(--muted);font-size:0.9rem}
+        .topic-group{background:var(--card);border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:18px;margin-bottom:18px}
+        .topic-group h3{margin:0 0 14px 0;font-size:1.2rem;color:var(--text);text-transform:capitalize}
+        .pattern-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+        .pattern-card{display:flex;align-items:center;justify-content:center;min-height:86px;padding:14px 12px;text-align:center;border-radius:10px;text-decoration:none;color:var(--text);background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);font-weight:600;line-height:1.35;transition:all .18s ease}
+        .pattern-card:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(14,165,233,0.08);border-color:rgba(14,165,233,0.3)}
+        footer.site-footer{margin-top:28px;padding:18px;border-radius:8px;border-top:1px solid rgba(255,255,255,0.04);display:flex;justify-content:space-between;align-items:center;background:transparent}
+        .small{color:var(--muted);font-size:0.9rem}
+        @media (max-width:760px){.hero{flex-direction:column}.search{width:140px}.pattern-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.section-heading{flex-direction:column;align-items:flex-start}}
+    </style>
+</head>
+
+<body>
+    <div class="container">
+    <header class="app-header">
+        <div style="display:flex;gap:12px;align-items:center">
+            <div class="brand">Problem IQ</div>
+            <nav class="top-nav">
+                <a href="#learn">Learn</a>
+                <a href="#practice">Practice</a>
+                <a href="#about">About</a>
+            </nav>
+        </div>
+
+        <div style="display:flex;align-items:center">
+            <input id="site-search" class="search" placeholder="Search topics..." aria-label="Search topics">
+            <a class="github-btn" href="{{ github_url }}" target="_blank">GitHub</a>
+        </div>
+    </header>
+    <section class="hero">
+        <div class="left">
+            <h1>Learn faster. Practice smarter.</h1>
+            <p>Curated aptitude topics, short lessons and practice problems to build your problem-solving skills.</p>
+            <div class="cta">
+                <a href="#learn">Start Learning</a>
+                <a href="#practice" style="background:transparent;color:var(--accent);border:1px solid rgba(43,108,176,0.12)">Practice</a>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+                <span class="chip">Open-source</span>
+                <!-- <span class="meta">{{ aptitude_patterns|length }} categories • {{ aptitude_patterns.values()|sum(attribute='|length') if false else '' }}</span> -->
+            </div>
+        </div>
+        <div class="right" style="width:320px">
+            <div class="card">
+                <strong>Quick tip</strong>
+                <p class="muted">Try one short lesson and one practice set daily to build momentum.</p>
+            </div>
+        </div>
+    </section>
+
+    <main>
+        <section id="learn" class="topic-section">
+            <div class="section-heading">
+                <h2>Learn</h2>
+                <a href="/learn" style="color:var(--accent);text-decoration:none;font-weight:600">Show more</a>
+            </div>
+
+            {% for category, patterns in aptitude_patterns.items() %}
+            <div class="topic-group" data-key="{{ category }}" data-patterns="{{ patterns|join(',')|lower }}">
+                <h3>{{ category.replace('_', ' ') }}</h3>
+                <div class="pattern-grid">
+                    {% for pattern in patterns %}
+                    <a class="pattern-card" href="/learn/{{ category }}" data-key="{{ category }}" data-pattern="{{ pattern|lower }}">
+                        {{ pattern }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <div style="margin-top:12px">
+                <a href="/learn" style="display:inline-block;padding:10px 14px;border-radius:10px;background:var(--accent);color:var(--bg);text-decoration:none;font-weight:700">View all learn topics</a>
+            </div>
+        </section>
+
+        <section id="practice" class="topic-section">
+            <div class="section-heading">
+                <h2>Practice</h2>
+                <a href="/practice" style="color:var(--accent);text-decoration:none;font-weight:600">Show more</a>
+            </div>
+
+            {% for category, patterns in aptitude_patterns.items() %}
+            <div class="topic-group" data-key="{{ category }}" data-patterns="{{ patterns|join(',')|lower }}">
+                <h3>{{ category.replace('_', ' ') }}</h3>
+                <div class="pattern-grid">
+                    {% for pattern in patterns %}
+                    <a class="pattern-card" href="/learn/{{ category }}" data-key="{{ category }}" data-pattern="{{ pattern|lower }}">
+                        {{ pattern }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <div style="margin-top:12px">
+                <a href="/practice" style="display:inline-block;padding:10px 14px;border-radius:10px;background:var(--accent);color:var(--bg);text-decoration:none;font-weight:700">View all practice topics</a>
+            </div>
+        </section>
+        <section id="about">
+            <h2>About</h2>
+            <p>Problem IQ is a lightweight learning and practice platform focused on aptitude patterns commonly asked in interviews and competitive exams. It organizes content into clear topics, offers short lessons, and provides practice problems to help you apply concepts.</p>
+            <p>Features:
+            <ul>
+                <li>Curated topic lists</li>
+                <li>Practice exercises (coming soon)</li>
+                <li>Open-source content and community contributions</li>
+            </ul>
+            </p>
+        </section>
+        <section id="github">
+            <h2>GitHub</h2>
+            <p>Problem IQ is open-source — contributions are welcome. Browse the repository, submit issues, or open pull requests to help improve content and features.</p>
+            <p><a href="{{ github_url }}" target="_blank">{{ github_url }}</a></p>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="small">© Problem IQ — open-source learning</div>
+        <div class="small">Made with ♥ — Contribute on <a href="{{ github_url }}" target="_blank">GitHub</a></div>
+    </footer>
+
+    <script>
+        // client-side search filtering for category groups and pattern cards
+        (function(){
+            const input = document.getElementById('site-search');
+            if(!input) return;
+            const groups = Array.from(document.querySelectorAll('.topic-group'));
+            const patternCards = Array.from(document.querySelectorAll('.pattern-card'));
+
+            input.addEventListener('input', ()=>{
+                const q = input.value.trim().toLowerCase();
+
+                groups.forEach(group => {
+                    const key = (group.getAttribute('data-key')||'').toLowerCase();
+                    const pats = (group.getAttribute('data-patterns')||'').toLowerCase();
+                    const match = q === '' || key.includes(q) || pats.includes(q);
+                    group.style.display = match ? 'block' : 'none';
+                });
+
+                if(q !== ''){
+                    patternCards.forEach(card => {
+                        const key = (card.getAttribute('data-key')||'').toLowerCase();
+                        const pattern = (card.getAttribute('data-pattern')||'').toLowerCase();
+                        card.style.display = (key.includes(q) || pattern.includes(q)) ? 'flex' : 'none';
+                    });
+                } else {
+                    patternCards.forEach(card => card.style.display = 'flex');
+                }
+            });
+        })();
+    </script>
+
+</div>
+</body>
+
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{{ page_title or topic_name }} - Problem IQ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#0B111E;--card:#172237;--text:#F3F4F6;--accent:#0EA5E9;--muted:#94A3B8}
+        *{box-sizing:border-box}
+        body{font-family:Inter,system-ui,Arial;margin:0;background:var(--bg);color:var(--text)}
+        .container{max-width:1100px;margin:0 auto;padding:24px}
+        .card{background:var(--card);padding:18px;border-radius:12px;margin-bottom:18px;border:1px solid rgba(255,255,255,0.04)}
+        .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+        .back{display:inline-block;color:var(--accent);text-decoration:none;font-weight:600}
+        .github-btn{background:var(--accent);color:var(--bg);padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:700}
+        h1{margin:0 0 12px 0;color:var(--text);text-transform:capitalize}
+        .muted{color:var(--muted)}
+        .category-box{background:var(--card);padding:18px;border-radius:12px;margin-bottom:18px;border:1px solid rgba(255,255,255,0.04)}
+        .category-header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+        .category-header h2{margin:0;text-transform:capitalize;font-size:1.2rem}
+        .pattern-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+        .pattern-card{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02)}
+        .pattern-card span{color:var(--text)}
+        .action{padding:7px 10px;background:var(--accent);color:var(--bg);border-radius:8px;text-decoration:none;font-weight:600;font-size:0.85rem}
+        @media (max-width:800px){.category-header{flex-direction:column;align-items:flex-start}.pattern-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="topbar">
+            <a class="back" href="/">← Home</a>
+            <a class="github-btn" href="{{ github_url }}" target="_blank">View on GitHub</a>
+        </div>
+
+        <div class="card">
+            <h1>{{ topic_name }}</h1>
+            <p class="muted">Browse all available categories and topics below. Choose a topic to continue with {{ mode }}.</p>
+        </div>
+
+        {% for category, patterns in categories.items() %}
+        <div class="category-box">
+            <div class="category-header">
+                <h2>{{ category.replace('_', ' ') }}</h2>
+                <a class="action" href="/learn/{{ category }}">Learn</a>
+            </div>
+            <div class="pattern-grid">
+                {% for pattern in patterns %}
+                <div class="pattern-card">
+                    <span>{{ pattern }}</span>
+                    <a class="action" href="/learn/{{ category }}">Learn</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

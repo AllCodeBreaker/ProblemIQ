@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ category_name.replace('_', ' ') }} - Learn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#0B111E;--card:#172237;--text:#F3F4F6;--accent:#0EA5E9;--muted:#94A3B8;--user:#0f172a;--bot:#172237}
+        *{box-sizing:border-box}
+        html,body{margin:0;padding:0;height:100vh;overflow:hidden;font-family:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text)}
+        a{text-decoration:none}
+        
+        .page-shell{display:flex;height:100vh;max-height:100vh;max-width:1400px;margin:0 auto;padding:20px;gap:20px;overflow:hidden}
+        
+        .sidebar{width:320px;height:100%;max-height:100%;background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:16px;overflow:hidden;flex-shrink:0}
+        .back-link{color:var(--accent);font-weight:700}
+        .sidebar h1{margin:0;font-size:1.4rem;text-transform:capitalize;flex-shrink:0}
+        .topic-list{display:flex;flex-direction:column;gap:10px;margin-top:10px;flex:1;overflow-y:auto;padding-right:4px}
+        .topic-pill{width:100%;padding:12px 14px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:var(--text);border-radius:10px;text-align:left;font:inherit;cursor:pointer;transition:.18s ease;flex-shrink:0}
+        .topic-pill.active,.topic-pill:hover{background:rgba(14,165,233,0.12);border-color:rgba(14,165,233,0.4)}
+        
+        .chat-panel{flex:1;height:100%;max-height:100%;background:var(--card);border:1px solid rgba(255,255,255,0.05);border-radius:18px;display:flex;flex-direction:column;overflow:hidden}
+        .chat-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.02);flex-shrink:0}
+        .chat-header strong{font-size:1.05rem}
+        .status{color:var(--accent);font-size:0.8rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase}
+        .chat-window{flex:1;padding:18px;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+        .message{display:flex}
+        .message.user{justify-content:flex-end}
+        .bubble{max-width:75%;padding:12px 14px;border-radius:14px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+        .message.bot .bubble{background:var(--bot);border:1px solid rgba(255,255,255,0.04)}
+        .message.user .bubble{background:var(--accent);color:#06131d}
+        .composer{display:flex;gap:12px;padding:18px;border-top:1px solid rgba(255,255,255,0.05);flex-shrink:0}
+        .composer input{flex:1;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:var(--text);font:inherit}
+        .composer button{padding:14px 18px;border:none;border-radius:12px;background:var(--accent);color:#081822;font-weight:700;cursor:pointer}
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+
+        @media (max-width:900px){
+            html,body{height:auto;overflow:auto}
+            .page-shell{flex-direction:column;height:auto;max-height:none;overflow:visible}
+            .sidebar{width:100%;height:auto;max-height:260px}
+            .chat-panel{height:calc(100vh - 310px);min-height:450px}
+            .bubble{max-width:90%}
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <aside class="sidebar">
+            <a href="/learn" class="back-link">← Back to topics</a>
+            <h1>{{ category_name.replace('_', ' ') }}</h1>
+            <div class="topic-list">
+                {% for pattern in patterns %}
+                <button class="topic-pill {% if loop.first %}active{% endif %}" data-pattern="{{ pattern }}">{{ pattern }}</button>
+                {% endfor %}
+            </div>
+        </aside>
+
+        <main class="chat-panel">
+            <div class="chat-header">
+                <strong id="active-topic">{{ patterns[0] }}</strong>
+                <span class="status">Local Ollama</span>
+            </div>
+
+            <div id="chat-window" class="chat-window">
+                <div class="message bot">
+                    <div class="bubble">Ask me anything about <span id="active-topic-chat">{{ patterns[0] }}</span> or any other topic in this category. I can explain concepts, formulas, shortcuts, and examples.</div>
+                </div>
+            </div>
+
+            <form id="chat-form" class="composer">
+                <input id="question-input" type="text" placeholder="Ask a doubt about this topic..." autocomplete="off" />
+                <button type="submit">Send</button>
+            </form>
+        </main>
+    </div>
+
+    <div id="topic-data" data-patterns='{{ patterns | tojson | safe }}' style="display:none"></div>
+
+    <script>
+        const topicPatterns = JSON.parse(document.getElementById('topic-data').dataset.patterns || '[]');
+        const chatWindow = document.getElementById('chat-window');
+        const questionInput = document.getElementById('question-input');
+        const chatForm = document.getElementById('chat-form');
+        const activeTopicLabel = document.getElementById('active-topic');
+        const activeTopicLabelChat = document.getElementById('active-topic-chat');
+        const topicButtons = Array.from(document.querySelectorAll('.topic-pill'));
+
+        let activeTopic = topicPatterns[0] || 'General aptitude';
+
+        function setActiveTopic(topic) {
+            activeTopic = topic;
+            activeTopicLabel.textContent = topic;
+            topicButtons.forEach((button) => {
+                button.classList.toggle('active', button.dataset.pattern === topic);
+            });
+
+            // Reset chat window with welcome message for the newly selected topic
+            chatWindow.innerHTML = '';
+            const welcomeWrapper = document.createElement('div');
+            welcomeWrapper.className = 'message bot';
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.textContent = `Ask me anything about ${topic}. I can explain concepts, formulas, shortcuts, and examples.`;
+            welcomeWrapper.appendChild(bubble);
+            chatWindow.appendChild(welcomeWrapper);
+        }
+
+        topicButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                setActiveTopic(button.dataset.pattern);
+            });
+        });
+
+        function addMessage(role, text) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `message ${role}`;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.textContent = text;
+
+            wrapper.appendChild(bubble);
+            chatWindow.appendChild(wrapper);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            return bubble;
+        }
+
+        chatForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const question = questionInput.value.trim();
+            if (!question) return;
+
+            addMessage('user', question);
+            questionInput.value = '';
+
+            const botBubble = addMessage('bot', '');
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        question: question,
+                        topic: activeTopic,
+                        patterns: topicPatterns
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    botBubble.textContent = `Something went wrong: ${errorText}`;
+                    return;
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    const chunk = decoder.decode(value, { stream: true });
+                    botBubble.textContent += chunk;
+                    chatWindow.scrollTop = chatWindow.scrollHeight;
+                }
+            } catch (error) {
+                botBubble.textContent = 'Unable to connect to the local Ollama server. Make sure Ollama is running.';
+            }
+        });
+    </script>
+</body>
+</html>
